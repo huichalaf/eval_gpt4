@@ -120,6 +120,26 @@ print("tokens base send: ",total_tokens_base_send)
 print("tokens tested send: ",total_tokens_test_send)
 print("scores base: ", scores_base)
 print("scores test: ", scores_test)
+std_base = 0
+std_test = 0
+for score in scores_base:
+    std_base += (score - sum(scores_base)/len(scores_base))**2
+std_base /= len(scores_base)
+std_base = std_base**(1/2)
+for score in scores_test:
+    std_test += (score - sum(scores_test)/len(scores_test))**2
+std_test /= len(scores_test)
+std_test = std_test**(1/2)
+print("std base: ", std_base)
+print("std test: ", std_test)
+median_base = sorted(scores_base)[len(scores_base)//2]
+median_test = sorted(scores_test)[len(scores_test)//2]
+print("median base: ", median_base)
+print("median test: ", median_test)
+moda_base = max(set(scores_base), key=scores_base.count)
+moda_test = max(set(scores_test), key=scores_test.count)
+print("moda base: ", moda_base)
+print("moda test: ", moda_test)
 print("avg base: ", sum(scores_base)/len(scores_base))
 print("avg test: ", sum(scores_test)/len(scores_test))
 
@@ -132,6 +152,25 @@ results["base"]["scores"] = scores_base
 results["base"]["responses"] = base_responses
 results["tested"]["scores"] = scores_test
 results["tested"]["responses"] = test_responses
+results["base"]["avg"] = sum(scores_base)/len(scores_base)
+results["tested"]["avg"] = sum(scores_test)/len(scores_test)
+results["base"]["std"] = std_base
+results["tested"]["std"] = std_test
+results["base"]["median"] = median_base
+results["tested"]["median"] = median_test
+results["base"]["moda"] = moda_base
+results["tested"]["moda"] = moda_test
+results["base"]["total_tokens"] = total_tokens_base
+results["tested"]["total_tokens"] = total_tokens_test
+results["base"]["total_tokens_send"] = total_tokens_base_send
+results["tested"]["total_tokens_send"] = total_tokens_test_send
+results["base"]["total_tokens_system"] = tokens_system
+results["tested"]["total_tokens_system"] = tokens_system
+results["base"]["total_price"] = total_price
+results["tested"]["total_price"] = total_price
+results["base"]["total_questions"] = amount_questions
+results["tested"]["total_questions"] = amount_questions
+
 #escribimos el archivo
 with open(f'results.json', 'w') as f:
     json.dump(results, f)
