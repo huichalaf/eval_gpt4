@@ -41,7 +41,7 @@ random.shuffle(questions)
 
 model_judge = "gpt-4"
 model_base = "gpt-3.5-turbo"
-model_tested = "ft:gpt-3.5-turbo-0613:aidtogrow::8EIHtETI"
+model_tested = "ft:gpt-3.5-turbo-0613:aidtogrow::8EPRXQk8"
 
 base_responses = []
 test_responses = []
