@@ -8,7 +8,7 @@ from time import time
 import dotenv
 dotenv.load_dotenv()
 #abrimos config.json
-with open('config.json') as f:
+with open(sys.argv[2]) as f:
     config = json.load(f)
 
 start = time()
@@ -24,7 +24,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 goal = config["goal"]
 #this is a gpt-4 evaluator
-system_message_gpt4 = f"""You're an llm evaluator, your task is to evaluate in grades from 0 to 100, the score of a response to a question having in mind that the ultimate goal is to {goal}, the format of input will be:
+system_message_gpt4 = f"""You're an llm evaluator, your task is to evaluate in grades from 0 to 100, be exigent and strict with the grades, the score of a response to a question having in mind that the ultimate goal is to {goal}, the format of input will be:
 answer:
 ###
 response:
@@ -83,7 +83,6 @@ for question in questions:
     index = questions.index(question)
     print(round(index/len(questions)*100),"%")
     question = question.replace("\n", "")
-    question += ". Let's think step by step."
     tokens_question = num_tokens_from_string(question, "cl100k_base")
     total_tokens_base_send += tokens_question
     total_tokens_test_send += tokens_question
@@ -92,16 +91,18 @@ for question in questions:
     response = ''
     score = 0
     try:
-        response = call_model(model_base, "", question)
-        score = call_gpt_4_eval(question, response)
-    except:
+        response = call_model(model_base, system_message_chats, question)
+        score = call_gpt_4_eval(model_judge, question, response)
+    except Exception as e:
+        print(e)
         continue
     scores_base.append(float(score))
     base_responses.append(response)
     total_tokens_base += num_tokens_from_string(response, "cl100k_base")
+    question += ". Let's think step by step."
     try:
-        response = call_model(model_tested, system_message_chats, question)
-        score = call_gpt_4_eval(question, response)
+        response = call_model(model_tested, "", question)
+        score = call_gpt_4_eval(model_judge, question, response)
     except:
         scores_base.pop()
         base_responses.pop()

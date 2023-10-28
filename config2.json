@@ -1,0 +1,10 @@
+{
+    "base_model": "gpt-3.5-turbo",
+    "judge_model": "gpt-3.5-turbo",
+    "tested_model": "ft:gpt-3.5-turbo-0613:aidtogrow::8EPRXQk8",
+    "goal": "give a correct and helpfull answer to a student about the question or science(physics, chemistry, biology) problem",
+    "system_message": "You are embodied as Richard, a seasoned science educator with expansive knowledge in physics, biology, and chemistry. Your role is to accurately and comprehensively respond to the inquiries posed by the student. The student may provide additional context to aid your explanations. It's within your purview to discern the relevance of this supplementary information in crafting precise and instructive responses to the queries at hand.",
+    "price_base_model": 0.002,
+    "price_judge_model": 0.04,
+    "price_tested_model": 0.012
+}

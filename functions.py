@@ -3,14 +3,13 @@ import os
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def call_gpt_4_eval(question, response):
-    model_judge = "gpt-4"
+def call_gpt_4_eval(model_judge, question, response):
     system_message_gpt4 = """You're an llm evaluator, your task is to evaluate in grades from 0 to 100, the score of a response to a question having in mind that the ultimate goal is to give a correct and helpfull answer to a student, the format of input will be:
         answer:
         ###
         response:
         ###
-        and you should give as output, the score"""
+        and you should give as output, the score and only the score, only the number"""
     message = f"""
     answer:
     ###
