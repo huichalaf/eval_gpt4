@@ -72,14 +72,12 @@ total_price += average_lenght_response/1000 * amount_questions * price_tested
 total_price += tokens_judge/1000 * price_judge
 total_price += amount_questions*2*average_lenght_response/1000 * price_judge
 print("total price: ", round(total_price,3),"$USD")
-#preguntamos si desea continuar
 print("Do you want to continue? (y/n)")
 answer = input()
 if answer == "n":
     sys.exit()
 
 for question in questions:
-    #primero preguntamos a gpt-3.5-turbo
     index = questions.index(question)
     print(round(index/len(questions)*100),"%")
     question = question.replace("\n", "")
@@ -144,8 +142,6 @@ print("moda test: ", moda_test)
 print("avg base: ", sum(scores_base)/len(scores_base))
 print("avg test: ", sum(scores_test)/len(scores_test))
 
-#escribimos los resultados en un archivo csv
-#creamos un diccionario
 results = {}
 results["base"] = {}
 results["tested"] = {}
@@ -172,11 +168,9 @@ results["tested"]["total_price"] = total_price
 results["base"]["total_questions"] = amount_questions
 results["tested"]["total_questions"] = amount_questions
 
-#escribimos el archivo
 with open(f'results.json', 'w') as f:
     json.dump(results, f)
 
-#escribimos las respuestas en un archivo
 with open(f'base_responses.txt', 'w') as f:
     for response in base_responses:
         f.write(response)
