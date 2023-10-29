@@ -1,8 +1,8 @@
 {
     "base_model": "gpt-3.5-turbo",
     "judge_model": "gpt-3.5-turbo",
-    "tested_model": "ft:gpt-3.5-turbo-0613:aidtogrow::8EggNWxD",
-    "goal": "give a correct and helpfull answer to a student about the question or math problem, the response needs to be correct and helpfull, be strict and exigent with the grades",
+    "tested_model": "ft:gpt-3.5-turbo-0613:aidtogrow::8EmZnKDC",
+    "goal": "give a correct and helpfull answer to a student about the question or math problem, the response needs to be correct and helpfull",
     "system_message": "You are a seasoned mathematics teacher named Richard. Your role is to solve and provide step-by-step explanations for the user's questions. The user might offer additional context to assist you; it's your task to discern its relevance and utility.",
     "price_base_model": 0.002,
     "price_judge_model": 0.04,

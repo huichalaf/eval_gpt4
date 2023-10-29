@@ -90,23 +90,24 @@ for question in questions:
     score = 0
     try:
         response = call_model(model_base, system_message_chats, question)
-        score = call_gpt_4_eval(model_judge, question, response)
+        score = call_gpt_4_eval(goal, model_judge, question, response)
+        scores_base.append(float(score))
+
     except Exception as e:
         print(e)
         continue
-    scores_base.append(float(score))
     base_responses.append(response)
     total_tokens_base += num_tokens_from_string(response, "cl100k_base")
     question += ". Let's think step by step."
     try:
         response = call_model(model_tested, "", question)
-        score = call_gpt_4_eval(model_judge, question, response)
+        score = call_gpt_4_eval(goal, model_judge, question, response)
+        scores_test.append(float(score))
     except:
         scores_base.pop()
         base_responses.pop()
         total_tokens_base -= num_tokens_from_string(response, "cl100k_base")
         continue
-    scores_test.append(float(score))
     test_responses.append(response)
     total_tokens_test += num_tokens_from_string(response, "cl100k_base")
     if index == 100:
