@@ -1,7 +1,22 @@
 import openai
 import os
+import math
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def calculate_size_sample(confidence_level, z_value, margin_of_error, population_size, estimated_proportion):
+    # confidence_level = 0.95  # 90% confidence level
+    # z_value = 1.645  # Z-value for a 90% confidence level
+    # margin_of_error = 0.1  # 10% margin of error
+    # population_size = 3000  # Total number of students
+    # estimated_proportion = 0.5  # Maximizes the sample size
+
+    # Calculate sample size for infinite population
+    sample_size_infinite = math.ceil((z_value ** 2) * estimated_proportion * (1 - estimated_proportion) / (margin_of_error ** 2))
+
+    # Adjust for finite population
+    sample_size_finite = math.ceil(sample_size_infinite / (1 + ((sample_size_infinite - 1) / population_size)))
+    return sample_size_infinite, sample_size_finite
 
 def call_gpt_4_eval(goal, model_judge, question, response):
     system_message_gpt4 = f"""You're an llm evaluator, your task is to evaluate in grades from 0 to 100, be strict and rigurous with the grades, the score of a response to a question having in mind that the ultimate goal is to {goal}, the format of input will be:

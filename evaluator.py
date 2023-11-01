@@ -93,7 +93,7 @@ print("Do you want to continue? (y/n)")
 answer = input()
 if answer == "n":
     sys.exit()
-
+final_questions = []
 for question in questions:
     index = questions.index(question)
     print(round(index/len(questions)*100),"%")
@@ -126,9 +126,7 @@ for question in questions:
         base_responses.pop()
         total_tokens_base -= num_tokens_from_string(response, "cl100k_base")
         continue
-    if index == 100:
-        break
-
+    final_questions.append(question)
 
 print("tokens base completion: ",total_tokens_base)
 print("tokens tested completion: ",total_tokens_test)
@@ -159,13 +157,17 @@ print("moda test: ", moda_test)
 print("avg base: ", sum(scores_base)/len(scores_base))
 print("avg test: ", sum(scores_test)/len(scores_test))
 
+df = pd.DataFrame()
+df["question"] = final_questions
+df["answer1"] = scores_base
+df["answer2"] = scores_test
+df.to_csv("to_eval.csv")
+
 results = {}
 results["base"] = {}
 results["tested"] = {}
 results["base"]["scores"] = scores_base
-results["base"]["responses"] = base_responses
 results["tested"]["scores"] = scores_test
-results["tested"]["responses"] = test_responses
 results["base"]["avg"] = sum(scores_base)/len(scores_base)
 results["tested"]["avg"] = sum(scores_test)/len(scores_test)
 results["base"]["std"] = std_base
