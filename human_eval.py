@@ -79,7 +79,33 @@ if uploaded_file is not None:
         #opcion ganadora mas veces
         st.write("Winner most times:")
         st.write(max(set(winners), key=winners.count))
+        #ahora guardamos los resultados en un archivo json
+        results = {}
+        results["score1_avg"] = sum(scores1)/len(scores1)
+        results["score2_avg"] = sum(scores2)/len(scores2)
+        results["score1_std"] = df["scores1"].std()
+        results["score2_std"] = df["scores2"].std()
+        results["score1_median"] = df["scores1"].median()
+        results["score2_median"] = df["scores2"].median()
+        results["score2_mode"] = df["scores2"].mode()[0]
+        results["score1_mode"] = df["scores1"].mode()[0]
+        results["winner"] = max(set(winners), key=winners.count)
+        results["winner_times"] = winners.count(max(set(winners), key=winners.count))
+        results["total_questions"] = len(winners)
 
+        with open(f'results_human_eval.json', 'w') as f:
+            json.dump(results, f)
+
+        #añadimos un boton para descargar los resultados
+        try:
+            st.markdown(get_binary_file_downloader_html('results_human_eval.json', 'Results JSON'), unsafe_allow_html=True)
+        except Exception as e:
+            st.write("An error ocurred: ", e)
+        try:
+            st.markdown(get_binary_file_downloader_html('human_eval_results.csv', 'Results CSV'), unsafe_allow_html=True)
+        except Exception as e:
+            st.write("An error ocurred: ", e)
+            
     except Exception as e:
         st.write("An error ocurred: ", e)
 else:
