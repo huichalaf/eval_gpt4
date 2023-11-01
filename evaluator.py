@@ -6,6 +6,7 @@ import tiktoken
 from functions import call_gpt_4_eval, call_model
 from time import time
 import dotenv
+import pandas as pd
 import multiprocessing
 
 def call_with_timeout(func, args, timeout=60):
@@ -94,6 +95,7 @@ answer = input()
 if answer == "n":
     sys.exit()
 final_questions = []
+questions = questions[:5]
 for question in questions:
     index = questions.index(question)
     print(round(index/len(questions)*100),"%")
@@ -159,8 +161,8 @@ print("avg test: ", sum(scores_test)/len(scores_test))
 
 df = pd.DataFrame()
 df["question"] = final_questions
-df["answer1"] = scores_base
-df["answer2"] = scores_test
+df["answer1"] = base_responses
+df["answer2"] = test_responses
 df.to_csv("to_eval.csv")
 
 results = {}
