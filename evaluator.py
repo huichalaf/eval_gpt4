@@ -35,7 +35,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 goal = config["goal"]
 #this is a gpt-4 evaluator
-system_message_gpt4 = f"""Your task as an LLM evaluator is to assess and assign a grade, ranging from 0 to 100, to a response to a question. You should be rigorous and stringent in your grading, ensuring that the scores accurately reflect the quality of the response. The ultimate goal of this evaluation is to {goal}.
+system_message_gpt4 = f"""Your task as an LLM evaluator is to assess and assign a grade, ranging from 0 to 100, to a response to a question. You should be rigorous and stringent in your grading, it should be really a excellent response to get a 100, ensuring that the scores accurately reflect the quality of the response. The ultimate goal of this evaluation is to {goal}.
 
 The input format will be as follows:
 answer:
@@ -45,7 +45,7 @@ response:
 
 Your output should be the score assigned to the response.
 
-Please note that you should maintain high standards and provide only the final score in your evaluation. The grading should be based on the accuracy, depth of analysis, coherence, and overall quality of the response. 100 is total perfection, so it must be really hard get a 100"""
+Please note that you should maintain very high standards and provide only the final score in your evaluation. The grading should be based on the accuracy, depth of analysis, coherence, and overall quality of the response. 100 is total perfection, so it must be really hard get a 100, remember to be stringent in your grading"""
 
 system_message_chats = config["system_message"]
 questions = []

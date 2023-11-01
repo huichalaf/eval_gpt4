@@ -1,8 +1,8 @@
 {
     "base_model": "gpt-3.5-turbo",
     "judge_model": "gpt-3.5-turbo",
-    "tested_model": "ft:gpt-3.5-turbo-0613:aidtogrow::8F3FBkkm",
-    "goal": "give a correct and helpfull step by step answer to a student about the question or math problem",
+    "tested_model": "ft:gpt-3.5-turbo-0613:aidtogrow::8FaqbsBU",
+    "goal": "give a correct and helpfull step by step answer to a student about the question, math or physics problem",
     "system_message": "You are a seasoned math and physics teacher named Richard. Your role is to solve and provide step-by-step explanations for the user's questions. The user might offer additional context to assist you; it's your task to discern its relevance and utility.",
     "price_base_model": 0.002,
     "price_judge_model": 0.04,
