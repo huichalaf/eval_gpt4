@@ -1,88 +1,64 @@
-import streamlit as st
+import gradio as gr
 import pandas as pd
-import base64
 import json
 
-def get_binary_file_downloader_html(bin_file, file_label='File'):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    bin_str = base64.b64encode(data).decode()
-    href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="{bin_file}">{file_label}</a>'
-    return href
-
-st.title('Human eval of LLMs')
-
-uploaded_file = st.file_uploader("Upload your CSV", type="csv")
+data = None
+index_pregunta = 0
 scores1 = []
 scores2 = []
 winners = []
-latex_code = r"""
-For \( \lambda_2 = 6 \): We need to solve the equation \( (A - I)\mathbf{x}_2 = \left(\begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix} - 6\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}\right)\mathbf{x}_2 = \begin{pmatrix} -2 & 1 \\ 2 & -3 \end{pmatrix}\mathbf{x}_2 = 0 \) for vector \( \mathbf{x}_2 \).
-"""
 
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
-    if 'index_pregunta' not in st.session_state:
-        st.session_state.index_pregunta = 0
-        st.experimental_rerun()
+def evaluate(file, score1, score2, winner):
+    global data, index_pregunta, scores1, scores2, winners
 
+    # Cargamos el archivo CSV solo una vez
+    if data is None:
+        data = pd.read_csv(file.name)
 
-    if st.session_state.index_pregunta < len(data):
-        try:
-            pregunta = data.iloc[st.session_state.index_pregunta]['question']
-            st.markdown("$$ A = \\begin{pmatrix} 4 & 1 \\\\ 2 & 3 \\end{pmatrix} $$")
-            st.markdown(f"Pregunta: {pregunta}")
+    # Guardamos las calificaciones y el ganador
+    scores1.append(score1)
+    scores2.append(score2)
+    if winner == "Option 1":
+        winners.append(1)
+    else:
+        winners.append(2)
+    #creamos un boton para que el usuario pueda pasar a la siguiente pregunta
+    # Si aún hay más preguntas por responder
+    if index_pregunta < len(data) - 1:
+        index_pregunta += 1
+        pregunta = data.iloc[index_pregunta]['question']
+        option1 = data.iloc[index_pregunta]['answer1']
+        option2 = data.iloc[index_pregunta]['answer2']
 
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown(f"Option 1: {data.iloc[st.session_state.index_pregunta]['answer1']}")
-                puntaje1 = st.slider("Score 1", 0, 100, 1, key=f"p1_{st.session_state.index_pregunta}")
-            with col2:
-                st.markdown(f"Option 2: {data.iloc[st.session_state.index_pregunta]['answer2']}")
-                puntaje2 = st.slider("Score 2", 0, 100, 1, key=f"p2_{st.session_state.index_pregunta}")
-
-            opcion_ganadora = st.radio("Choose the winner:", ["Option 1", "Option 2"])
-            scores1.append(puntaje1)
-            scores2.append(puntaje2)
-            if opcion_ganadora == "Option 1":
-                winners.append(1)
-            else:
-                winners.append(2)
-
-            if st.button("Next"):
-                st.session_state.index_pregunta += 1
-
-        except Exception as e:
-            st.write("An error occurred:", e)
+        return pregunta, option1, option2, 50, 50, ""  # Valores por defecto
 
     else:
-        st.write("¡Eval completed, thank you!")
+        # Si ya respondió todas las preguntas
         df = pd.DataFrame()
         df["scores1"] = scores1
         df["scores2"] = scores2
         df["winner"] = winners
-        df.to_csv("human_eval_results.csv")
 
-        st.write("Results:")
-        st.write(df.describe())
+        # Puedes agregar aquí más lógica si quieres mostrar algo al final
+        return "Gracias por completar la evaluación", "", "", 50, 50, ""
 
-        json_data = {}
-        json_data["scores1_avg"] = sum(scores1)/len(scores1)
-        json_data["scores2_avg"] = sum(scores2)/len(scores2)
-        json_data["scores1_std"] = df["scores1"].std()
-        json_data["scores2_std"] = df["scores2"].std()
-        json_data["scores1_median"] = df["scores1"].median()
-        json_data["scores2_median"] = df["scores2"].median()
-        json_data["scores1_moda"] = df["scores1"].mode()[0]
-        json_data["scores2_moda"] = df["scores2"].mode()[0]
-        json_data["total_questions"] = len(scores1)
-        json_data["winner"] = df["winner"].mode()[0]
+iface = gr.Interface(
+    evaluate, 
+    [
+        "file", 
+        gr.inputs.Slider(0, 100, default=50, label="Score 1"),
+        gr.inputs.Slider(0, 100, default=50, label="Score 2"),
+        gr.inputs.Radio(["Option 1", "Option 2"], label="Choose the winner")
+    ], 
+    [
+        gr.outputs.Textbox(label="Question"),
+        gr.outputs.Textbox(label="Option 1"),
+        gr.outputs.Textbox(label="Option 2"),
+        gr.outputs.Textbox(label="Default Score 1"),
+        gr.outputs.Textbox(label="Default Score 2"),
+        gr.outputs.Textbox(label="Message"),
+    ],
+    live=True
+)
 
-        with open('results_human_eval.json', 'w') as f:
-            json.dump(json_data, f)
-
-        st.markdown(get_binary_file_downloader_html('results_human_eval.json', 'Download Results JSON'), unsafe_allow_html=True)
-        st.markdown(get_binary_file_downloader_html('human_eval_results.csv', 'Download Results CSV'), unsafe_allow_html=True)
-
-else:
-    st.write("Please upload a CSV file.")
+iface.launch()
